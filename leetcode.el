@@ -1057,6 +1057,15 @@ STATUS_CODE has following possible value:
         (insert (format "Expected Answer: %s\n\n" .expected_output))
         (unless (string-empty-p .std_output)
           (insert (format "Stdout: \n%s\n" .std_output))))
+       ((eq .status_code 12)
+        (insert (format "Status: %s\n\n"
+                        (leetcode--add-font-lock
+                         (format "%s (%s/%s)" .status_msg .total_correct .total_testcases)
+                         'leetcode-error-face)))
+        (insert (format "Test Case: \n%s\n\n" .last_testcase))
+        (insert (format "Expected Answer: %s\n\n" .expected_output))
+        (unless (string-empty-p .std_output)
+          (insert (format "Stdout: \n%s\n" .std_output))))
        ((eq .status_code 14)
         (insert (format "Status: %s" (leetcode--add-font-lock .status_msg 'leetcode-error-face)))
         (insert "\n"))
@@ -1098,7 +1107,8 @@ will show the detail in other window and jump to it."
       ;; Sometimes LeetCode don't have a '<p>' at the outermost...
       (insert "<p>" content "</p>")
       (setq shr-current-font t)
-      (leetcode--replace-in-buffer "" "")
+      (leetcode--replace-in-buffer "
+" "")
       ;; NOTE: shr.el can't render "https://xxxx.png", so we use "http"
       (leetcode--replace-in-buffer "https" "http")
       (shr-render-buffer (current-buffer)))
@@ -1316,7 +1326,8 @@ major mode by `leetcode-prefer-language'and `auto-mode-alist'."
                                     snippets))
                  (template-code (leetcode-snippet-code snippet)))
             (insert template-code)
-            (leetcode--replace-in-buffer "" "")))
+            (leetcode--replace-in-buffer "
+" "")))
         (funcall (assoc-default suffix auto-mode-alist #'string-match-p))
         (leetcode-solution-mode t))
 
